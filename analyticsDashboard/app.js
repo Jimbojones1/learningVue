@@ -18,19 +18,28 @@ app.use(express.static(path.join(__dirname, 'public/')));
 //    1. /
 //    2. /about
 //    3. /contact
-app.get(/\/(about|contact)?$/, function(req, res) {
+app.get(/\/(about|contact)?$/, (req, res) => {
   res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
 // serve up the dashboard when someone visits /dashboard
-app.get('/dashboard', function(req, res) {
+app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'views/dashboard.html'));
 });
 
-io.on('connection', function(socket) {
+io.on('connection', (socket) => {
+
+  socket.on('visitor-data', (data) => {
+    visitorData[socket.id] = data;
+  })
+
+
+
+
   // a user has visited our page - add them to the visitorsData object
-  socket.on('disconnect', function() {
+  socket.on('disconnect', () => {
     // a user has left our page - remove them from the visitorsData object
+    delete visitorsData[socket.id];
   });
 });
 
